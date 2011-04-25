@@ -5,17 +5,17 @@ require 'mechanize'
 require 'hpricot'
   
   
-  auth = {'email' => 'justyna.sosinska@workforcesolution.co.uk', 'password' => 'workforce'}
+  auth = {'email' => 'something@yahoo.com', 'password' => 'password'}
   @auth = auth
   @agent = Mechanize.new
   @agent.user_agent_alias = 'Mac FireFox'
   #~ @keep_alive_time  = 300
-  @page = @agent.get('http://www.seriousteachers.com/views/upgrade_posting.asp')
+  @page = @agent.get('http://www.something.com')
   login_form = @page.forms.first
   login_form.email= @auth['email']
   login_form.password = @auth['password']
   @page = @agent.submit(login_form)
-   user=Mysql.new('localhost','root','root','teachers_rec_development')
+   user=Mysql.new('localhost','root','root','something_development')
 
 
 
@@ -26,7 +26,7 @@ require 'hpricot'
  puts i
 
   begin
- @page = @agent.get("http://www.seriousteachers.com/te2/resume.asp?idteacher=676338&idresume=#{i}&idemployer=7214&idjob=180657")
+ @page = @agent.get("http://www.something.com/te2/idteacher=676338&idresume=#{i}&idemployer=7214&idjob=180657")
   result_name = (@page/"table[1]/tr[2]/td").inner_text
 
 results = user.query("SELECT id from scrap_users ORDER BY id DESC limit 0,1;")
@@ -87,14 +87,14 @@ if result_image
  
                   result_image.each do |image| 
 
-                              if image.match("../upload_teacher/imageteacher/")
+                              if image.match("../upload_file/imagefile/")
                                     begin
                                         FileUtils.mkdir_p "profile_images/#{@row}"                                    
                                         @userimage = "#{File.basename image}"
-                                         result_image_val=@agent.get("http://www.seriousteachers.com/upload_teacher/imageteacher/#{File.basename image}").save_as("profile_images/#{@row}/#{File.basename image}")
+                                         result_image_val=@agent.get("http://www.something.com/upload_file/imagefile/#{File.basename image}").save_as("profile_images/#{@row}/#{File.basename image}")
                                          break
                                      rescue
-                                          puts "http://www.seriousteachers.com/upload_teacher/imageteacher/#{File.basename image}"
+                                          puts "http://www.seriousteachers.com/upload_file/imagefile/#{File.basename image}"
                                           @userimage = " "
                                      end
                                 else                                   
@@ -105,18 +105,18 @@ if result_image
            @userimage = " "
   end
 
-result_profile_url="http://www.seriousteachers.com/te2/resume.asp?idteacher=676338&idresume=#{i}&idemployer=7214&idjob=180657"
+result_profile_url="http://www.something.com/te2/idteacher=676338&idresume=#{i}&idemployer=7214&idjob=180657"
 
 result_cv_url= cv_url
 
 if mycertificate != " "
-result_certificate_url="http://www.seriousteachers.com/certificate/#{mycertificate}"
+result_certificate_url="http://www.something.com/certificate/#{mycertificate}"
 else
 result_certificate_url =" "
 end
   
 if @userimage != " "
-result_image_url= "http://www.seriousteachers.com/upload_teacher/imageteacher/#{@userimage}"
+result_image_url= "http://www.something.com/upload_file/imagefile/#{@userimage}"
 else
 result_image_url =" "
 end
