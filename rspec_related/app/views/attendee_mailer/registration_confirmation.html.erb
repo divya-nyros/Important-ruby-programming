@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head></head>
+  <body>
+    <p><strong><u>From the Desk of the Partners&hellip;</u></strong></p>
+    <p>Hello <%= @attendee.first_name %>,</p>
+    <p>I know you spoke with a company representative and they decided that you would potentially be a good fit for the company, and would like to have you meet with the partners:</p>
+    <div><strong><%= @event.start_date.strftime("%A") %>, <%= @event.start_date.strftime("%B #{@event.start_date.day.ordinalize}, %Y") %></strong> at <strong><%= @event.start_time.to_s(:default_time) %></strong></div>
+    <div><strong><%= @event.location %> <%= @event.addresses.first.street rescue "" %></strong><br/></div>
+    <div><strong><%= @event.addresses.first.city rescue "" %>, <%= @event.addresses.first.state rescue "" %> <%= @event.addresses.first.zipcode rescue "" %></strong></div>
+    <p>Please come dressed in business casual with pen and pad in hand.</p>
+    <p>We look forward to meeting you and seeing how you fit into our organization.</p>
+    <div><strong>Please <u>reply</u> to this email, just so I know you got it.</strong></div>
+    <% unless @attendee.questionnaire_sent || @attendee.questionnaire.nil? || @attendee.questionnaire.empty? %>
+      <div>
+        <div><strong>Below are questions &amp; your answers</strong></div>
+        <div>
+          <ol>
+            <% @attendee.questionnaire.each do |question, answer| %>
+              <li><span class="question"><strong>Question: </strong><%= question %></span><span class="dash">-</span><span class="answer"><strong>Answer: </strong><%= answer %></span></li>
+            <% end %>
+          </ol>
+        </div>
+      </div>
+    <% end %>
+    <div>&nbsp;</div>
+    <div><strong>Thank you!</strong></div>
+    <div>&nbsp;</div>
+    <div>Regards,</div>
+    <div>Jasmine</div>
+    <div>&nbsp;</div>
+    <div>&nbsp;</div>
+    <div>
+      <div><strong>The Innovative Investors</strong></div>
+      <div>Jasmine Noble</div>
+      <div>Personal Assistant</div>
+      <div>135 West 52nd Street (5th Floor)</div>
+      <div>New York, NY 10019</div>
+      <div>tel: (888) 373-7052</div>
+      <div>fax: (800) 948-5703</div>
+      <div><em>*****************************************************************************</em></div>
+      <div><em>If you are not the intended recipient of this e-mail, please notify</em></div>
+      <div><em>the sender immediately. The contents of this e-mail do not amend</em></div>
+      <div><em>any existing disclosures or agreements unless expressly stated.</em></div>
+      <div><em>*****************************************************************************</em></div>
+      <% 100.times do -%>
+      <div><em>&nbsp;</em></div>
+      <% end -%>
+    </div>
+  </body>
+</html>

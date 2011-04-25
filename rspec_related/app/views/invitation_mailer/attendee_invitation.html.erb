@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head></head>
+  <body>
+    <p>Hello <%= @invitation.name.blank? ? "Investor" : @invitation.name %>,</p>
+    <p>
+      First off, we're EXCITED that you have made a decision to find success in Real Estate.<br/>
+      Below you will find your unique pass code for you and your guest.<br/>
+      <br/>
+      <b><%= @invitation.code %></b><br/>
+      <br/>
+      Please store this in a safe place, as you will need it to register for the event.<br/>
+      Make sure you go here right away to register as we fill up fast and once all spots are taken registration is closed:<br/>
+
+      <%
+        registration_url = ""
+        registration_url = @invitation.event_type.registration_url unless @invitation.event_type.nil?
+
+        unless registration_url.blank? || registration_url.index("?").nil?
+          registration_url += "&code=" + @invitation.code
+        else
+          registration_url += "?code=" + @invitation.code
+        end
+      %>
+      <a href='<%= registration_url %>'><%= registration_url %></a>
+    </p>
+
+    <p>
+      Please make sure to fill in the QUICK questionnaire and to REGISTER YOUR GUEST as well.<br/>
+      It's always good to bring someone with you but if you don't have anyone...don't worry just bring yourself!<br/>
+      We look forward to spending 3 Power Packed Days with You!
+    </p>
+
+    <p>
+      Live abundantly,<br/>
+      Darius &amp; Hugo<br/>
+      The Innovative Investors
+    </p>
+  </body>
+</html>

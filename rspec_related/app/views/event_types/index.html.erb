@@ -1,0 +1,36 @@
+<% if current_user.type == "User" -%>
+<% site_title("Manage Event Types") %>
+
+<h2>Manage <%= current_model.name.humanize.pluralize %>  <%= "(#{current_model.count})" %></h2>
+
+<table class="table percent-100"> 
+  <tbody>
+    <tr>
+      <!-- TODO: sortable columns -->
+      <th>Name</th>
+      <th>Description</th>
+      <th>Notify to</th>
+      <th>Registration url</th>
+      <th>Actions</th>
+    </tr>
+    <% if current_objects.any? -%>
+      <% current_objects.each do |event_type| -%>
+      <tr>
+        <td style="white-space: nowrap;"><%= link_to(h(event_type.name), event_type_path(event_type)) %></td>
+        <td><%=h event_type.description %></td>
+        <td><%=h event_type.email %></td>
+        <td><%=h event_type.registration_url %></td>
+        <td class="actions icons">
+          <%= link_to(icon_image_tag('edit', event_type), edit_event_type_path(event_type)) %>
+          <%= link_to(icon_image_tag('delete', event_type), event_type_path(event_type), :method => :delete, :confirm => "Are you sure?") %>
+        </td>
+      </tr>
+      <% end -%>
+    <% else -%>
+      <tr>
+        <td colspan="3">No event types</td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
+<% end -%>

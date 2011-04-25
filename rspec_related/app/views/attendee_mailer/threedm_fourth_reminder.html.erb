@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head></head>
+  <body>
+    <p>You’re going to have the experience of a lifetime <%= @attendee.first_name %></p>
+
+    <p>Our Strategic Investor Training has created many successful investors.</p>
+
+    <p>I mean people who were seasoned investors to the beginner have greatly benefitted from the material we’re going through.</p>
+
+    <p>This has taken years to perfect and we know this is going to be the start of a very fruitful relationship.</p>
+
+    <p>Just a few reminders:</p>
+
+    <ol>
+      <li>Here’s our Address<br />
+        <p>
+          <strong><%= @event.start_date.strftime("%A %B #{@event.start_date.day.ordinalize}, %Y") %></strong><br />
+          <strong><%= @event.location + " " + (@event.addresses.first.street rescue "") + " " + (@event.addresses.first.unit rescue "") %></strong><br />
+          <strong><%= (@event.addresses.first.city rescue "") + " " + (@event.addresses.first.state rescue "") + ", " + (@event.addresses.first.zip rescue "") %></strong>
+        </p>
+      </li>
+      <li>We ask that you please be there by 8:30am</li>
+      <li>Please dress relaxed and comfortable but also bring a sweater as the room sometimes can be a bit chilly.</li>
+      <li>If you haven’t registered please make sure you do so right now and make sure to register your guest as well (email us full name, mail, and phone for guest if you already registered didn’t originally include them).</li>
+    </ol>
+
+    <p>In preparation for the training you should:</p>
+
+    <ol>
+      <li>Go through as many videos as you can in the Vault.</li>
+
+      <li>Register here for your free blog http://www.freerealestateblogfactory.com as we might discuss real estate blogging if we have time.</li>
+
+      <li>Register for Connected Innovative Investors at http://www.connectedinnovativeinvestors.com (make sure to register all the way at the bottom of the page).</li>
+
+      <li>Commit to paper the types of transactions you would like to focus on and your ideal financial goal for the next 12 months.</li>
+    </ol>
+
+    <p>See you in just 2 days!</p>
+
+    <p>
+      Regards,<br />
+      Jasmine
+    </p>
+<pre>
+<span style="font-weight:bold; font-size: 1.2em;">The Innovative Investors</span>
+Jasmine Noble
+Personal Assistant
+135 West 52nd Street (5th Floor)
+New York, NY 10019
+tel: (888) 373-7052
+fax: 1 800 948-5703
+<div style="font-style:italic;">
+*****************************************************************************
+If you are not the intended recipient of this e-mail, please notify
+the sender immediately. The contents of this e-mail do not amend
+any existing disclosures or agreements unless expressly stated.
+*****************************************************************************
+</div>
+</pre>
+  </body>

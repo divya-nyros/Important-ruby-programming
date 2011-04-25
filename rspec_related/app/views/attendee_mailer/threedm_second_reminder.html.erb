@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head></head>
+  <body>
+    <h4 style="font-weight:bold; text-decoration:underline">From the Desk of the Partners...</h4>
+    
+    <p>Hello <%= @attendee.first_name %>,</p>
+
+    <p>We’re fast approaching the 3 Day Training Event. We’re so excited because this has been the start of so many beneficial relationships.</p>
+
+    <p>
+      <strong><%= @event.start_date.strftime("%A %B #{@event.start_date.day.ordinalize}, %Y") %></strong><br />
+      <strong><%= @event.location + " " + (@event.addresses.first.street rescue "") + " " + (@event.addresses.first.unit rescue "") %></strong><br />
+      <strong><%= (@event.addresses.first.city rescue "") + " " + (@event.addresses.first.state rescue "") + ", " + (@event.addresses.first.zip rescue "") %></strong><br /><br />
+    </p>
+
+    <p>By now you should have registered for the event.</p>
+
+    <p>If you haven’t yet or misplaced your registration code, please just replay and I’ll make sure to get it to you right away, as we require every participant to be registered.</p>
+
+    <p>Through our research we have noticed that those who attend with a partner seem to do the best. Probably because you can bounce ideas off of them, and sometimes 2 different perspectives lead to a better learning experience.</p>
+
+    <p>With that being said make sure to register a guest. Now if you already registered and forgot to add you guest, no problem, just reply back with their full name, email, and phone and we’ll be sure to add them.</p>
+
+    <p>We look forward to meeting you and seeing how you fit into our organization.</p>
+
+    <p>Thank you!</p>
+
+    <p>
+      Regards,<br />
+      Jasmine
+    </p>
+<pre>
+<span style="font-weight:bold; font-size: 1.2em;">The Innovative Investors</span>
+Jasmine Noble
+Personal Assistant
+135 West 52nd Street (5th Floor)
+New York, NY 10019
+tel: (888) 373-7052
+fax: 1 800 948-5703
+<div style="font-style:italic;">
+*****************************************************************************
+If you are not the intended recipient of this e-mail, please notify
+the sender immediately. The contents of this e-mail do not amend
+any existing disclosures or agreements unless expressly stated.
+*****************************************************************************
+</div>
+</pre>
+  </body>

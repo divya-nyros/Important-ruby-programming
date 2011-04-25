@@ -1,0 +1,19 @@
+<% activity ||= show || @activity %>
+<div class="activity <%= 'system' if activity.system? %>">
+  <div class="activity-category">
+    <%= activity.category.humanize.titleize %>: 
+    <% if activity.actor -%>
+      <% if activity.system? -%>
+        On behalf of
+      <% end -%>
+      <%= activity.actor.name %>
+    <% end -%>
+  </div>
+  <div class="activity-time">
+    <%= activity.created_at.in_time_zone('Eastern Time (US & Canada)').strftime('%m/%d/%Y at %I:%M%p') %>
+  </div>
+  <div class="clear"></div>
+  <div class="activity-data">
+    <%= activity.data %>
+  </div>
+</div>

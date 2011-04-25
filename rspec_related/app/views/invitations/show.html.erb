@@ -1,0 +1,29 @@
+<% site_title("Managing #{current_model.name.humanize} | #{current_object.email}") %>
+<h2>
+  <% if current_user.type == "User" || current_object.affiliate == current_user -%>
+  <span style="float: right; font-weight: normal"><%= link_to 'Edit this invitation', edit_invitation_path(current_object) %></span>
+  <% end -%>
+  <%= current_object.name.blank? ? "Anonymous" : current_object.name %>
+</h2>
+
+<div class="right-col right-align">
+  <% if current_object.affiliate -%>
+    Sales Agent: <strong><%= link_to(current_object.affiliate.name, affiliate_path(current_object.affiliate)) %></strong>
+    <br/>
+  <% end -%>
+  Created On: <strong><%= current_object.created_at.strftime('%x') %></strong>
+</div>
+
+<div class="left-col left-align">
+  Event types: <strong><%= current_object.event_type.name %></strong>
+  <br />
+  Allow guest?: <strong><%= current_object.allow_guest ? "Yes" : "No" %></strong>
+  <br />
+  Email: <strong><%= current_object.email %></strong>
+  <br/>
+  Code: <strong><%= current_object.code %></strong>
+  <br/>
+  Status: <strong><%= current_object.accepted? ? "Accepted" : "Sent" %></strong>
+</div>
+
+<div class="clear">&nbsp;</div>

@@ -1,0 +1,12 @@
+Congrats <%=h @affiliate.promoter.first_name %>! You have a new Affiliate from The Innovative Investors.
+
+<table>
+  <tr>
+    <td>Name:</td>
+    <td><%=h @affiliate.name %></td>
+  </tr>
+  <tr>
+    <td>Location:</td>
+    <td><%=h @affiliate.addresses.first.city %>, <%=h @affiliate.addresses.first.state %></td>
+  </tr>
+</table>

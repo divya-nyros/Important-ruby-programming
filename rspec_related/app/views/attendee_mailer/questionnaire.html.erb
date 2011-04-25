@@ -1,0 +1,14 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head></head>
+  <body>
+    <h3>Darius, <%= @attendee.name %> registered <% @event.name %> with the following answers:</h3>
+    <div>
+      <ol>
+        <% @attendee.questionnaire.each do |question, answer| %>
+          <li><span><strong>Question: </strong><%= question %></span><span>-</span><span><strong>Answer: </strong><%= answer %></span></li>
+        <% end %>
+      </ol>
+    </div>
+  </body>
+</html>

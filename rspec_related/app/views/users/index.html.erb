@@ -1,0 +1,50 @@
+<% title = action_name == 'deleted' ? 'Deleted' : 'Manage' %>
+<% site_title("#{title} #{current_model.name.humanize.pluralize}") %>
+
+<h2><%= title %> <%= current_model.name.humanize.pluralize %></h2>
+<table class="table"> 
+  <tbody>
+    <tr>
+      <!-- TODO: sortable columns -->
+      <th>Name</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <% if %w( deleted ).include?(action_name) -%>
+        <th>Type</th>
+      <% end -%>
+      <th>Actions</th>
+    </tr>
+    <% if current_objects.any? -%>
+      <% current_objects.each do |user| -%>
+      <tr>
+        <td>
+          <%= link_to(h(user.name), user_path(user)) %>
+        </td>
+        <td><%=h user.phone_numbers.first rescue "" %></td>
+        <td><%=h user.email %></td>
+        <% if %w( deleted ).include?(action_name) -%>
+          <td><%= user.type.humanize %></td>
+        <% end -%>
+        <td>
+          <%= link_to(icon_image_tag('edit', user), edit_user_path(user)) %>
+          
+          <% if user.deleted? -%>
+            <%= link_to(icon_image_tag('undo', user, "restore"), restore_user_path(user), :method => :put) %>
+            <%= link_to(icon_image_tag('delete', user, "permanently delete"), permanently_delete_user_path(user), :method => :delete, :confirm => "Are you sure?") %>
+          <% else -%>
+            <%= link_to(icon_image_tag('delete', user), user_path(user), :method => :delete, :confirm => "Are you sure?") %>
+          <% end -%>
+        </td>
+      </tr>
+      <% end -%>
+    <% else -%>
+      <tr>
+        <td colspan="5">No <%= current_model.name.capitalize.pluralize %></td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
+
+<%= will_paginate current_objects %>
+<br />
+<%= page_entries_info current_objects %>

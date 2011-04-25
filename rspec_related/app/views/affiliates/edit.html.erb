@@ -1,0 +1,10 @@
+<% site_title("Editing Sales Agent | #{current_object.name}") %>
+
+<h2>
+  <% if current_object.parent -%>
+    <span style="float: right; font-weight: normal; font-size: 0.85em">Promoter: <%= link_to(current_object.parent.name, affiliate_path(current_object.parent)) %></span>
+  <% end -%>
+  Edit <%= link_to(current_object.name, affiliate_path(current_object)) %>
+</h2>
+
+<%= render :partial => 'form' %>

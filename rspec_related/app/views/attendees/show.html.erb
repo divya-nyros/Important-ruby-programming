@@ -1,0 +1,206 @@
+<% site_title("Managing #{current_model.name.humanize} | #{current_object.name}") %>
+<h2>
+  <span style="float: right; font-weight: normal"><%= link_to 'Edit this person', edit_attendee_path(current_object) %></span>
+  <%= current_object.name %>: <span><%= current_object.state.humanize %></span>
+</h2>
+
+<div class="right-col right-align">
+  <% if current_object.affiliate -%>
+    Sales Agent: <strong><%= link_to(current_object.affiliate.name, affiliate_path(current_object.affiliate)) %></strong>
+    <br/>
+  <% end -%>
+  Registered On: <strong><%= current_object.created_at.strftime('%x') %></strong>
+  <br/>
+  Status: <strong><%= current_object.state.humanize %></strong>
+</div>
+
+<div class="left-col left-align">
+  Phone: <strong><%=h current_object.phone_numbers.first rescue "" %></strong>
+  <br/>
+  Email: <strong><%= mail_to(current_object.email) %></strong>
+  <br/>
+</div>
+
+<div class="clear">&nbsp;</div>
+
+<% if current_object.events.any? -%>
+<h2>Registered Events</h2>
+<table class="table"> 
+  <tbody>
+    <tr>
+      <!-- TODO: sortable columns -->
+      <th>Event</th>
+      <th>Location</th>
+      <th>Source</th>
+      <th>Attendee Status</th>
+      <th>Actions</th>
+    </tr>
+    <% current_object.event_registrations.descending.each do |registration| -%>
+    <tr>
+      <td>
+        <%= link_to(h(registration.event.name), event_path(registration.event)) %>
+        <span style="display: block; clear: left; font-size: 0.7em;"><%= display_date_span(registration.event) %></span><br />
+        <% unless registration.event.ended? -%>
+          <span style="display: block; clear: left; font-size: 0.7em;"><%= link_to("Reschedule", edit_attendee_path(current_object, :event_id => registration.event.id)) %></span>
+        <% end -%>
+        <%
+        if registration.guest
+          guest = Attendee.find(registration.guest)
+          vip = nil
+        elsif registration.guest_of
+          vip = Attendee.find(registration.guest_of)
+          guest = nil
+        else
+          guest = nil
+          vip = nil
+        end
+        %>
+        <% unless vip.nil? -%>
+          <br /><span style="display: block; clear: left; font-size: 0.7em;">VIP: <%= link_to(h(vip.name), attendee_path(vip)) %></span>
+        <% end -%>
+        <% unless guest.nil? -%>
+          <br /><span style="display: block; clear: left; font-size: 0.7em;">Guest: <%= link_to(h(guest.name), attendee_path(guest)) %></span>
+        <% end -%>
+      </td>
+      <td><%=h registration.event.location %></td>
+      <td><%=registration.source_id.nil? ? "Unknown" : h(registration.source.name) rescue "<span class='invalid'>Invalid</span>" %></td>
+      <td><%= registration.state.humanize %></td>
+      <td>
+        <% unless registration.event.ended? -%>
+          <% if registration.registered? -%>
+            <span class="confirm_section">
+              <%= link_to(icon_image_tag('phone', nil, 'Confirm'), do_confirm_path(registration.event.id, current_object.id), :onclick => "return updateAction(this);") %>
+            </span>
+            <span class="cancel_section">
+              <%= link_to(icon_image_tag('cancel', nil, 'Cancel'), do_cancel_path(registration.event.id, current_object.id), :onclick => "return confirmCancel(this);") %>
+            </span>
+          <% elsif registration.confirmed? -%>
+            <span class="confirm_section" style="display:none;">
+              <%= link_to(icon_image_tag('phone', nil, 'Confirm'), do_confirm_path(registration.event.id, current_object.id), :onclick => "return updateAction(this);") %>
+            </span>
+            <span class="cancel_section">
+              <%= link_to(icon_image_tag('cancel', nil, 'Cancel'), do_cancel_path(registration.event.id, current_object.id), :onclick => "return confirmCancel(this);") %>
+            </span>
+          <% else -%>
+            <span class="confirm_section">
+              <%= link_to(icon_image_tag('phone', nil, 'Confirm'), do_confirm_path(registration.event.id, current_object.id), :onclick => "return updateAction(this);") %>
+            </span>
+            <span class="cancel_section" style="display:none;">
+              <%= link_to(icon_image_tag('cancel', nil, 'Cancel'), do_cancel_path(registration.event.id, current_object.id), :onclick => "return confirmCancel(this);") %>
+            </span>
+          <% end -%>
+          <span class="reschedule_section"><%#= link_to('Reschedule', reschedule_path(registration.event.id, current_object.id)) %></span>
+        
+        <% else -%>
+          <em>No Actions</em>
+        <% end -%>
+      </td>
+    </tr>
+    <% end -%>
+  </tbody>
+</table>
+<script type="text/javascript">
+    function updateAction(currentTag) {
+      jQuery.get(jQuery(currentTag).attr("href"), function(data) {
+        //jQuery(currentTag).parent().parent().next().html(data);
+        jQuery(currentTag).parent().prev().prev().html(data);
+        jQuery(currentTag).parent().parent().parent().prev().html(data);
+        jQuery(currentTag).parent().hide();
+        jQuery(currentTag).parent().next().show();
+      });
+
+      return false;
+    }
+
+    function confirmCancel(currentTag) {
+      if (confirm("Are you sure?")) {
+        jQuery.get(jQuery(currentTag).attr("href"), function(data) {
+          jQuery(currentTag).parent().prev().show();
+          jQuery(currentTag).parent().prev().prev().prev().html(data);
+          jQuery(currentTag).parent().parent().parent().prev().html(data);
+          jQuery(currentTag).parent().hide();
+        });
+
+        return false;
+      }
+    }
+  </script>
+<% end -%>
+
+<br />
+<h2><%= h current_object.name + "'s history" %></h2>
+<div class="left-col left-align" id="activity_section">
+  <fieldset>
+    <div class="left-align" id="activity_form_section">
+      <% form_tag(attendee_activities_path(current_object), {:id => "add_activity_form", :class => "form"}) do %>
+      <div class="left-element" style="margin-right: 6px;">
+        <%= select_tag "activity[category]", options_for_select([["Note/Comment", "comment"], ["Phone Call", "phone_call"], ["Email", "email"]]) %>
+      </div>
+      <div class="left-element" style="margin-right: 6px;">
+        <%= text_field_tag "activity[data]", nil, {:class => "text", :id => "activity_data_text_field"} %>
+      </div>
+      <div class="left-element" style="margin-right: 6px;">
+        <%= text_area_tag "activity[data]", nil, {:class => "text", :rows => 5, :style => "display:none;", :id => "activity_data_text_area"} %>
+      </div>
+      <div class="left-element">
+        <%= submit_tag "Add", :class => 'submit' %>
+      </div>
+      <div class="clear"></div>
+      <% end %>
+      <div id="loading" style="display:none;">
+        <img src="/images/loading.gif" alt="loading" />
+      </div>
+    </div>
+    <div id="activities">
+      <%= render :partial => '/activities/show', :collection => current_object.activities %>
+    </div>
+  </fieldset>
+</div>
+
+<div class="clear">&nbsp;</div>
+<script type="text/javascript">
+  jQuery("#add_activity_form").submit(function(event) {
+    event.preventDefault();
+
+    if (jQuery("#activity_category").val() != "comment" && jQuery("#add_activity_form input[type=text]").val() == "" ||
+        jQuery("#activity_category").val() == "comment" && jQuery("#add_activity_form select").val() == "") {
+      alert("Please enter data");
+    } else {
+      jQuery("#add_activity_form").hide();
+      jQuery("#loading").show();
+      jQuery.post(jQuery("#add_activity_form").attr("action"), jQuery("#add_activity_form").serialize(), function(data) {
+        jQuery("#activities").prepend(data);
+        jQuery("#add_activity_form").show();
+        jQuery("#loading").hide();
+      });
+      jQuery("#add_activity_form input[type=text]").val("");
+      jQuery("#add_activity_form textarea").val("");
+    }
+  });
+
+  jQuery("#activity_category").change(function() {
+    setActivityCategoryInput();
+  });
+
+  jQuery(document).ready(function() {
+    setActivityCategoryInput();
+  });
+
+  function setActivityCategoryInput() {
+    if (jQuery("#activity_category").val() == "comment") {
+      jQuery("#activity_data_text_field").hide();
+      jQuery("#activity_data_text_field").attr("disabled", "disabled");
+      jQuery("#activity_data_text_area").show();
+      jQuery("#activity_data_text_area").removeAttr("disabled");
+    } else {
+      jQuery("#activity_data_text_field").show();
+      jQuery("#activity_data_text_field").removeAttr("disabled");
+      jQuery("#activity_data_text_area").hide();
+      jQuery("#activity_data_text_area").attr("disabled", "disabled");
+    }
+  }
+
+  function updateLeadState(request) {
+    jQuery("#lead_state").html(request.reponseText);
+  }
+</script>

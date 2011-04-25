@@ -1,0 +1,27 @@
+<% site_title("Managing Sales Agent | #{current_object.name}") %>
+<h2>
+  <span style="float: right; font-weight: normal"><%= link_to 'Edit this person', edit_affiliate_path(current_object) %></span> 
+  <%= current_object.name %>
+</h2>
+
+<div class="right-col right-align">
+  <% if current_object.parent -%>
+    Master Agent: <strong><%= link_to(current_object.parent.name, affiliate_path(current_object.parent)) %></strong>
+    <br/>
+  <% end -%>
+  Joined On: <strong><%= current_object.created_at.strftime('%x') %></strong>
+  <br/>
+  Registered Attendees: <strong><%= current_object.lead_count %></strong>
+</div>
+
+<div class="left-col left-align">
+  Phone: <strong><%=h current_object.phone_numbers.first rescue "" %></strong>
+  <br/>
+  Email: <strong><%= mail_to(current_object.email) %></strong>
+  <br/>
+  <% if current_object.websites.any? -%>
+    Website: <%= link_to(current_object.websites.first, current_object.websites.first.to_url) %>
+  <% end -%>
+</div>
+
+<div class="clear">&nbsp;</div>

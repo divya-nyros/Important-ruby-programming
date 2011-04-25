@@ -1,0 +1,42 @@
+<% site_title("Manage Sales Agents") %>
+
+<h2>Manage Sales Agents  <%= "(#{Affiliate.count})" %></h2>
+<table class="table"> 
+  <tbody>
+    <tr>
+      <!-- TODO: sortable columns -->
+      <th>Name</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <th>Actions</th>
+    </tr>
+    <% if current_objects.any? -%>
+      <% current_objects.each do |affiliate| -%>
+      <tr>
+        <td>
+          <%= link_to(h(affiliate.name), affiliate_path(affiliate)) %>
+          <% if affiliate.parent -%>
+            <span class="parent" style="display: block; clear: left; font-size: 0.7em;">
+              Promoter: <%=h affiliate.parent.name rescue '' %>
+            </span>
+          <% end -%>
+        </td>
+        <td><%=h affiliate.phone_numbers.first rescue "" %></td>
+        <td><%=h affiliate.email %></td>
+        <td>
+          <%= link_to(icon_image_tag('edit', affiliate), edit_affiliate_path(affiliate)) %>
+          <%= link_to(icon_image_tag('delete', affiliate), affiliate_path(affiliate), :method => :delete, :confirm => "Are you sure?") %>
+        </td>
+      </tr>
+      <% end -%>
+    <% else -%>
+      <tr>
+        <td colspan="2">No <%= current_model.name.capitalize.pluralize %></td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
+
+<%= will_paginate current_objects %>
+<br />
+<%= page_entries_info(current_objects).gsub(/affiliate/, 'sales agent') %>

@@ -1,0 +1,38 @@
+<% site_title("Manage #{current_model.name.humanize.pluralize}") %>
+
+<h2>Manage <%= current_model.name.humanize.pluralize %>  <%= "(#{current_model.count})" %></h2>
+
+<table class="table percent-100"> 
+  <tbody>
+    <tr>
+      <!-- TODO: sortable columns -->
+      <th>Email</th>
+      <th>Invitee</th>
+      <th>Event Type</th>
+      <th>Code</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    <% if current_objects.any? -%>
+      <% current_objects.each do |invitation| -%>
+      <tr>
+        <td><%=h invitation.email %></td>
+        <td><%=h invitation.name.blank? ? "Anonymous" : invitation.name %></td>
+        <td><%=h invitation.event_type.name rescue '' %></td>
+        <td style="white-space: nowrap;"><%= link_to(h(invitation.code), invitation_path(invitation)) %></td>
+        <td><%= invitation.accepted? ? "Accepted" : "Sent" %></td>
+        <% if current_user.type == "User" || invitation.affiliate == current_user -%>
+        <td class="actions icons">
+          <%= link_to(icon_image_tag('edit', invitation), edit_invitation_path(invitation)) %>
+          <%= link_to(icon_image_tag('delete', invitation), invitation_path(invitation), :method => :delete, :confirm => "Are you sure?") %>
+        </td>
+        <% end -%>
+      </tr>
+      <% end -%>
+    <% else -%>
+      <tr>
+        <td colspan="6">No <%= current_model.name.capitalize.pluralize %></td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>

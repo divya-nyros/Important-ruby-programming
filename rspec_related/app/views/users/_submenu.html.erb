@@ -1,0 +1,7 @@
+<div id="sub-menu">
+  <ul>
+    <li class="<%= 'selected' if %w( index ).include?(action_name) %>"><%= link_to('Manage Users', users_path) %></li>
+    <li class="<%= 'selected' if %w( deleted ).include?(action_name) %>"><%= link_to('Deleted Users', deleted_users_path) %></li>
+    <li class="<%= 'selected' if %w( new create ).include?(action_name) %>"><%= link_to('New User', new_user_path) %></li>
+  </ul>
+</div>

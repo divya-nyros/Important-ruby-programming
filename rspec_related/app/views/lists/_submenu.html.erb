@@ -1,0 +1,6 @@
+<div id="sub-menu">
+  <ul>
+    <li class="<%= 'selected' if %w( index ).include?(action_name) %>"><%= link_to('Manage Lists', lists_path) %></li>
+    <li class="<%= 'selected' if %w( new create ).include?(action_name) %>"><%= link_to('New List', new_list_path) %></li>
+  </ul>
+</div>

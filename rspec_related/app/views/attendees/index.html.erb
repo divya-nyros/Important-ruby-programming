@@ -1,0 +1,113 @@
+<% site_title("Manage #{current_model.name.humanize.pluralize}") %>
+<% if current_user.type == "User" %>
+  <h2>
+    <% unless params[:search].blank? -%>
+      <span style="float: right; font-weight: normal"><%#= search_string(params[:search]) %></span>
+    <% end -%>
+    Manage <%= current_model.name.humanize.pluralize %> <%= "(#{current_objects.total_entries})" %>
+  </h2>
+<% else %>
+  <h2>Manage <%= current_model.name.humanize.pluralize %></h2>
+<% end %>
+<table class="table percent-100"> 
+  <tbody>
+    <tr>
+      <!-- TODO: sortable columns -->
+      <th>Name</th>
+      <th>Contact</th>
+      <th>Event(s)</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    <% if current_objects.any? -%>
+      <% current_objects.each do |attendee| -%>
+      <tr>
+        <td>
+          <%= link_to(h(attendee.name), attendee_path(attendee)) %>
+          <% if attendee.affiliate -%>
+            <span style="display: block; clear: left; font-size: 0.7em;">SA: <%= h(attendee.affiliate.name) rescue "" %></span>
+          <% end -%>
+          <% vip_count = EventRegistration.count(:conditions => {:guest_of => attendee.id}) %>
+          <% if vip_count > 0 %>
+            <span style="display: block; clear: left; font-size: 0.7em;">VIP <%= "of " + pluralize(vip_count, "guest") %></span>
+          <% end %>
+            <% guest_count = EventRegistration.count(:conditions => {:guest => attendee.id}) %>
+          <% if guest_count > 0 %>
+            <span style="display: block; clear: left; font-size: 0.7em;">Guest <%= "of " + pluralize(guest_count, "vip") %></span>
+          <% end -%>
+        </td>
+        <td>
+          <% if attendee.phone_numbers.any? -%>
+            Phone: <%= attendee.phone_numbers.first %><br/>
+          <% end -%>
+          Email: <%= mail_to(attendee.email) %>
+        <td>
+          <%
+            registrations = attendee.event_registrations.descending
+          -%>
+          <% registrations.each do |registration| -%>
+            <% event = registration.event -%>
+            <%=h event.name %> (<%= event.start_date.to_time.to_s(:default_date) %>)
+            <br/>
+            <% unless event.ended? %>
+            <span style="font-size: 0.85em;">
+              <span><%=h registration.state.humanize %></span> <span>-</span>
+              <% if registration.registered? -%>
+                <span class="confirm_section"><%= link_to('Confirm', do_confirm_path(event.id, attendee.id), :onclick => "return updateAction(this);") %></span> or <span class="cancel_section"><%= link_to('Cancel Registration', do_cancel_path(event.id, attendee.id), :onclick => "return confirmCancel(this);") %></span>
+              <% elsif registration.confirmed? -%>
+                <span class="confirm_section" style="display:none;"><%= link_to('Confirm', do_confirm_path(event.id, attendee.id), :onclick => "return updateAction(this);") %></span><span class="cancel_section"><%= link_to('Cancel Registration', do_cancel_path(event.id, attendee.id), :onclick => "return confirmCancel(this);") %></span>
+              <% else -%>
+                <span class="confirm_section"><%= link_to('Confirm', do_confirm_path(event.id, attendee.id), :onclick => "return updateAction(this);") %></span><span class="cancel_section" style="display:none;"><%= link_to('Cancel Registration', do_cancel_path(event.id, attendee.id), :onclick => "return confirmCancel(this);") %></span>
+              <% end -%>
+              <!-- TODO: reschedule -->
+            </span>
+            <% else %>
+              <span style="font-size: 0.85em;"><%=h registration.state.humanize %></span>
+            <% end %>
+            <br/>
+            <% unless registration == registrations.last -%>
+              <hr style="margin: 0.5em 0em;"/>
+            <% end -%>
+          <% end -%>
+        </td>
+        <td><%= attendee.state.humanize %></td>
+        <td class="actions icons">
+          <%= link_to(icon_image_tag('edit', attendee), edit_attendee_path(attendee)) %>
+          <%= link_to(icon_image_tag('delete', attendee), attendee_path(attendee), :method => :delete, :confirm => "Are you sure?") %>
+        </td>
+      </tr>
+      <% end -%>
+    <% else -%>
+      <tr>
+        <td colspan="5">No <%= current_model.name.capitalize.pluralize %></td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
+  <script type="text/javascript">
+    function updateAction(currentTag) {
+      jQuery.get(jQuery(currentTag).attr("href"), function(data) {
+        //jQuery(currentTag).parent().parent().next().html(data);
+        jQuery(currentTag).parent().prev().prev().html(data);
+        jQuery(currentTag).parent().hide();
+        jQuery(currentTag).parent().next().show();
+      });
+
+      return false;
+    }
+
+    function confirmCancel(currentTag) {
+      if (confirm("Are you sure?")) {
+        jQuery.get(jQuery(currentTag).attr("href"), function(data) {
+          jQuery(currentTag).parent().prev().show();
+          jQuery(currentTag).parent().prev().prev().prev().html(data);
+          jQuery(currentTag).parent().hide();
+        });
+
+        return false;
+      }
+    }
+  </script>
+<%= will_paginate current_objects %>
+
+<%= page_entries_info current_objects %>

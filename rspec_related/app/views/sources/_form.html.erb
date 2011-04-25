@@ -1,0 +1,21 @@
+<% form_for @source, :html => { :class => 'form' } do |f| -%>
+  <%= error_messages_for :source %>
+  
+  <div class="left-col">
+    <h3>Source Details</h3>
+    
+    <fieldset class="last">
+      <%= f.label :name %>
+      <br/>
+      <%= f.text_field :name %>
+      <br/>
+      <%= f.label :description %>
+      <br/>
+      <%= f.text_area :description, :size => '30x10' %>
+    </fieldset>
+  </div>
+  
+  <div class="clear" style="height: 10px;"><hr/></div>
+  
+  <%= f.submit "Save", :class => 'submit' %> or <%= link_to 'Cancel', objects_path %>
+<% end -%>

@@ -1,0 +1,44 @@
+<% form_for @event_type, :html => { :class => 'form' } do |f| -%>
+  <%= error_messages_for :event_type %>
+  
+  <div class="left-col">
+    <h3>Event Type Details</h3>
+    
+    <fieldset>
+      <%= f.label :name %>
+      <br/>
+      <%= f.text_field :name %>
+      <br/>
+      <%= f.label :description %>
+      <br/>
+      <%= f.text_area :description, :size => '30x10' %>
+      <br />
+      <%= f.label "Registration url" %>
+      <br/>
+      <%= f.text_field :registration_url %>
+      <br />
+      <%= f.label "Notify to" %>
+      <br/>
+      <%= f.text_field :email %>
+    </fieldset>
+    <fieldset class="last">
+        <label>iContact list group</label>
+        <br/>
+        <%
+          options = List.group_names
+          options.insert(0, ["--Select group--", ""])
+
+          unless @event_type.nil?
+            selected = @event_type.icontact_group
+          else
+            selected = ""
+          end
+        %>
+        <%= select_tag "event_type[icontact_group]", options_for_select(options, selected), {:style => "width: 210px;"} %>
+    </fieldset>
+  </div>
+  
+  <div class="clear" style="height: 10px;"><hr/></div>
+  
+  <%= f.submit "Save", :class => 'submit' %> or <%= link_to 'Cancel', objects_path %>
+<% end -%>

@@ -1,0 +1,44 @@
+<% site_title("Manage #{current_model.name.humanize.pluralize}") %>
+
+<h2>Manage <%= current_model.name.humanize.pluralize %>  <%= "(#{Event.count})" %></h2>
+<table class="table"> 
+  <tbody>
+    <tr>
+      <!-- TODO: sortable columns -->
+      <th>Name</th>
+      
+      <th>Start Dates</th>
+			<th>End Dates</th>
+			<th>Location</th>
+      <th>Address</th>
+      <th>Actions</th>
+    </tr>
+    <% if current_objects.any? -%>
+      <% current_objects.each do |event| -%>
+      <tr>
+        <td><%= link_to(h(event.name), event_path(event)) %></td>
+       
+        <td>
+          <%=h event.start_date%>
+        </td>
+				 <td>
+          <%=h event.end_date%>
+        </td>
+				 <td><%=h event.location %></td>
+				 <td><%=h event.addresses.last.city %> ,<%=h event.addresses.last.state %> </td>
+        <td>
+          <%= link_to('Edit', edit_event_path(event)) %> |
+          <%= link_to('Delete', event_path(event), :method => :delete, :confirm => "Are you sure?") %> |
+          <%= link_to('Check-In', checkin_event_path(event)) %>
+        </td>
+      </tr>
+      <% end -%>
+    <% else -%>
+      <tr>
+        <td colspan="5">No <%= current_model.name.capitalize.pluralize %></td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
+
+<%= will_paginate current_objects %>

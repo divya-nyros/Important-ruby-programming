@@ -1,0 +1,90 @@
+<% site_title("Event Check-In") %>
+
+<h2>Event Check-In: <span><%= link_to(current_object.name, event_path(current_object)) %> (<%= current_object.start_date.to_time.to_s(:default_date) %>)</span></h2>
+
+<% form_tag checkin_event_path, :method => :post, :class => 'form' do |f| %>
+  <h3>Search Attendees</h3>
+  <label for="name">Name:</label>
+  <%= text_field :search, :name, :value => @filter_name %> <!-- auto-complete?? -->
+<% end -%>
+<table class="table"> 
+  <tbody>
+    <tr>
+      <!-- TODO: sortable columns -->
+      <th>Name</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    <% if @attendees.any? -%>
+      <% @attendees.each do |attendee| -%>
+      <tr>
+        <td>
+          <%=h attendee.name %>
+          <% if attendee.affiliate -%>
+            <span style="display: block; clear: left; font-size: 0.7em;">SA: <%= attendee.affiliate.name rescue "" %></span>
+          <% end -%>
+          <%
+            registration = attendee.event_registrations.for_event(current_object).first rescue nil
+
+            unless registration.nil?
+              if registration.guest
+                guest = Attendee.find(registration.guest) rescue nil
+                vip = nil
+              elsif registration.guest_of
+                vip = Attendee.find(registration.guest_of) rescue nil
+                guest = nil
+              else
+                vip = nil
+                guest = nil
+              end
+            end
+          %>
+          <% unless vip.nil? -%>
+            <span style="display: block; clear: left; font-size: 0.7em;">VIP: <%= link_to(h(vip.name), attendee_path(vip.id)) %></span>
+          <% end -%>
+          <% unless guest.nil? -%>
+            <span style="display: block; clear: left; font-size: 0.7em;">Guest: <%= link_to(h(guest.name), attendee_path(guest.id)) %></span>
+          <% end -%>
+        </td>
+        <td><%=h attendee.phone_numbers.first rescue '' %></td>
+        <td><%=h attendee.email %></td>
+        <td id="attendee-<%= attendee.id %>-state">
+          <% if attendee.registered? -%>
+            <%= attendee.event_registrations.find_by_event_id(current_object.id).state.humanize %>
+          <% else -%>
+            <%= attendee.state.humanize %>
+          <% end -%>
+        </td>
+        <td>
+					<div id="attendee-<%= attendee.id %>-actions">
+            <%= link_to(icon_image_tag('phone', nil, 'Confirm'), do_confirm_path(params[:id], attendee.id), :class => "ajax", :onclick => "loadActions(this); return false;") %>
+            <%= link_to(icon_image_tag('cancel', nil, 'Cancel'), do_cancel_path(params[:id], attendee.id), :class => "ajax", :onclick => "loadActions(this); return false;") %>
+            &nbsp;&nbsp;
+            <%= link_to(icon_image_tag('close', nil, 'No showed'), do_noshow_path(params[:id], attendee.id), :class => "ajax", :onclick => "loadActions(this); return false;") %>
+            <%= link_to(icon_image_tag('accept', nil, 'Attended'), do_checkin_path(params[:id], attendee.id), :class => "ajax", :onclick => "loadActions(this); return false;") %>
+            <%= link_to(icon_image_tag('go', nil, 'Undecided'), do_otf_path(params[:id], attendee.id), :class => "ajax", :onclick => "loadActions(this); return false;") %>
+            <%= link_to(icon_image_tag('shopping_cart', nil, 'Purchased'), do_purchase_path(params[:id], attendee.id), :class => "ajax", :onclick => "loadActions(this); return false;") %>
+          </div>
+        </td>
+
+      </tr>
+      <% end -%>
+    <% else -%>
+      <tr>
+        <td colspan="5">No Attendees are Registered</td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
+  <script type="text/javascript">
+    function loadActions(currentTag) {
+      jQuery.get(jQuery(currentTag).attr("href"), function(data) {
+        jQuery(currentTag).parent().parent().prev().html(data);
+      });
+    }
+  </script>
+<%= will_paginate @attendees %>
+<br />
+<%= page_entries_info @attendees %>

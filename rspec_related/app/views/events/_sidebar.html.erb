@@ -1,0 +1,32 @@
+<div class="sidebar">
+  <div class="title"><p>Search</p></div>
+  <span>
+  <% form_tag search_events_path, :method => :get, :class => 'form' do |f| -%>
+    <label for="name">Name:</label>
+    <%= text_field :search, :name, :size => 20, :value => !@default_value.nil? && !@default_value[:name].nil? ? @default_value[:name] : "" %>
+    <br/>
+    <label for="name">Start Date:</label>
+    <%= text_field :search, :start_date, :size => 20, :class => "datepicker", :value => !@default_value.nil? && !@default_value[:start_date].nil? ? @default_value[:start_date] : "" %>
+    <br/>
+    <label for="name">End Date:</label>
+    <%= text_field :search, :end_date, :size => 20, :class => "datepicker", :value => !@default_value.nil? && !@default_value[:end_date].nil? ? @default_value[:end_date] : "" %>
+    <br/>
+    <label for="name">Location:</label>
+    <%= text_field :search, :location, :size => 20, :value => !@default_value.nil? && !@default_value[:location].nil? ? @default_value[:location] : "" %>
+    <br/>
+    <label for="name">City/State:</label><br/>
+    <%= text_field :search, :city, :size => 12, :value => !@default_value.nil? && !@default_value[:name].nil? ? @default_value[:city] : "" %>
+    <%= text_field :search, :state_address, :size => 2, :value => !@default_value.nil? && !@default_value[:name].nil? ? @default_value[:state_address] : "" %>
+    <br/>
+    <!-- TODO: dates, location, etc. -->
+
+    <%= submit_tag "Search", :name => nil, :class => 'submit' %>
+  <% end %>
+  </span>
+  <div class="sidebar-bottom"></div>
+</div>
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    jQuery(".datepicker").datepicker();
+  });
+</script>

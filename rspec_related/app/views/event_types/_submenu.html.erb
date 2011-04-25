@@ -1,0 +1,8 @@
+<% if current_user.type == "User" %>
+<div id="sub-menu">
+  <ul>
+    <li class="<%= 'selected' if %w( index ).include?(action_name) %>"><%= link_to('Event Types', event_types_path) %></li>
+    <li class="<%= 'selected' if %w( new create ).include?(action_name) %>"><%= link_to('New Event Type', new_event_type_path) %></li>
+  </ul>
+</div>
+<% end %>

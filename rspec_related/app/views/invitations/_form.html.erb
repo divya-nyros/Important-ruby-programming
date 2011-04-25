@@ -1,0 +1,57 @@
+<% form_for @invitation, :html => { :class => 'form' } do |f| -%>
+  <%= error_messages_for :invitation %>
+
+  <div class="left-col">
+    <fieldset>
+      <% if current_user.type == "User" %>
+      <%= f.label :affiliate_id, "Affiliate" %> (optional)
+      <br/>
+      <span style="margin-left: 2.0em;">
+        <%= f.collection_select :affiliate_id, Affiliate.find(:all, :order => "first_name, last_name"), :id, :name, { :prompt => "-- Select a Sales Affiliate --" } %>
+      </span>
+      <br/>
+      <% end %>
+    </fieldset>
+  </div>
+
+  <div class="left-col">
+    <h3>Invitation Information</h3>
+    <fieldset class="last">
+      <% unless @invitation.new_record? -%>
+        <%= f.label :code %>
+        <br/>
+        <span style="margin-left: 2.0em;"><%= f.text_field :code, :class => 'text', :disabled => true %></span>
+        <span style="margin-left: 1.0em;"><%= link_to 'Regenerate Code', '#' %></span>
+        <br />
+      <% end -%>
+      <%= f.label :event_type_id %>
+      <br/>
+      <span style="margin-left: 2.0em;">
+        <%= f.collection_select :event_type_id, EventType.find(:all, :order => "name"), :id, :name, { :prompt => "-- Select an event type --"} %>
+      </span>
+      <br />
+      <%= f.label :allow_guest %>
+      <br/>
+      <span style="margin-left: 2.0em;">
+        <%= f.check_box :allow_guest, {:value => true} %>
+      </span>
+      <br />
+      <%= f.label :email %>
+      <br/>
+      <span style="margin-left: 2.0em;"><%= f.text_field :email, :class => 'text' %></span>
+      <br />
+      <%= f.label :first_name %> (optional)
+      <br/>
+      <span style="margin-left: 2.0em;"><%= f.text_field :first_name, :class => 'text' %></span>
+      <br />
+      <%= f.label :last_name %> (optional)
+      <br/>
+      <span style="margin-left: 2.0em;"><%= f.text_field :last_name, :class => 'text' %></span>
+    </fieldset>
+
+  </div>
+
+  <div class="clear" style="height: 10px;"><hr/></div>
+
+  <%= f.submit "Save", :class => 'submit' %> or <%= link_to 'Cancel', objects_path %>
+<% end -%>

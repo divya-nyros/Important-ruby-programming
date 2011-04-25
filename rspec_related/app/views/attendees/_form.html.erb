@@ -1,0 +1,71 @@
+<% form_for @attendee, :html => { :class => 'form' } do |f| -%>
+  <%= error_messages_for :attendee %>
+
+  <div class="left-col">
+    <fieldset>
+      <% if current_user.type == "User" %>
+      <%= f.label :affiliate_id, "Affiliate" %>
+      <br/>
+      <span style="margin-left: 2.0em;">
+        <%= f.collection_select :affiliate_id, Affiliate.find(:all, :order => "first_name, last_name"), :id, :name, { :prompt => "-- Select a Sales Affiliate --" } %>
+      </span>
+      <br/>
+      <% end %>
+      <label for="event_id">Event</label>
+      <br/>
+      <span style="margin-left: 2.0em;">
+        <%= collection_select(:event, :id, Event.upcoming.find(:all, :order => "name, start_date"), :id, :display_name, { :prompt => "-- Select an Upcoming Event --"}) %>
+        <input type="hidden" name="event[old_id]" value="<%= !@event.nil? ? @event.id : nil %>" />
+      </span>
+    </fieldset>
+  </div>
+
+  <div class="left-col">
+    <h3>Attendee Information</h3>
+    <fieldset>
+      <%= f.label :first_name %>
+      <br/>
+      <span style="margin-left: 2.0em;"><%= f.text_field :first_name, :class => 'text' %></span>
+      <br />
+      <%= f.label :last_name %>
+      <br/>
+      <span style="margin-left: 2.0em;"><%= f.text_field :last_name, :class => 'text' %></span>
+    </fieldset>
+
+    <fieldset>
+      <%= f.label :email %>
+      <br/>
+      <span style="margin-left: 2.0em;"><%= f.text_field :email, :class => 'text' %></span>
+    </fieldset>
+
+    <fieldset>
+      <% f.fields_for :phone_numbers do |phone_numbers| -%>
+        <%= phone_numbers.label :data, "Phone Number" %>
+        <br/>
+        <span style="margin-left: 2.0em;">
+          <%= phone_numbers.text_field :data, :class => 'text' %> <%= phone_numbers.select :category, PhoneNumber.categories %>
+        </span>
+      <% end -%>
+    </fieldset>
+
+    <fieldset class="last">
+      <%= "Source" %>
+      <br/>
+      <!--%= select("event_registrations", "source_id", Source.all.collect{|s| [s.name, s.id]}, { :prompt => "-- Select a source --" }) %-->
+      <% unless @attendee.nil? || @attendee.event_registrations.nil? || @event.nil? %>
+        <% @attendee.event_registrations.each do |ev| %>
+          <% if ev.event_id == @event.id && !ev.source_id.nil? %>
+            <% @source = Source.find(ev.source_id) rescue nil %>
+          <% end %>
+        <% end %>
+      <% end %>
+      <span style="margin-left: 2.0em;">
+        <%= collection_select(:source, :id, Source.find(:all, :order => "name"), :id, :name, { :prompt => "-- Select a source --"}) %>
+      </span>
+    </fieldset>
+  </div>
+
+  <div class="clear" style="height: 10px;"><hr/></div>
+
+  <%= f.submit "Save", :class => 'submit' %> or <%= link_to 'Cancel', objects_path %>
+<% end -%>

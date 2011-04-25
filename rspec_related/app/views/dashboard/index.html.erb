@@ -1,0 +1,81 @@
+<h2>Recent Activity on The Innovative Investors</h2>
+
+<table class="table dashboard">
+	<caption><span style="float:right;"><%= link_to('View All', attendees_path) %></span>New Attendees</caption>
+  <tbody>
+    <tr>
+      <!-- TODO: sortable columns -->
+      <th>Name</th>
+      <th>Email</th>
+      <th>Event</th>
+      <th>Registered On</th>
+    </tr>
+    <% if @attendees.any? -%>
+      <% @attendees.each do |attendee| -%>
+        <tr>
+          <td>
+            <%= link_to(h(attendee.name), attendee_path(attendee)) %>
+            <% if attendee.affiliate -%>
+              <span style="display: block; clear: left; font-size: 0.7em;">SA: <%= attendee.affiliate.name rescue ""%></span>
+            <% end -%>
+            <% vip_count = EventRegistration.count(:conditions => {:guest_of => attendee.id}) %>
+            <% if vip_count > 0 %>
+              <span style="display: block; clear: left; font-size: 0.7em;">VIP <%= "of " + pluralize(vip_count, "guest") %></span>
+            <% end %>
+              <% guest_count = EventRegistration.count(:conditions => {:guest => attendee.id}) %>
+            <% if guest_count > 0 %>
+              <span style="display: block; clear: left; font-size: 0.7em;">Guest <%= "of " + pluralize(guest_count, "vip") %></span>
+            <% end -%>
+          </td>
+          <td><%=h attendee.email  %></td>
+          <td>
+            <%=h attendee.event_registrations.last.event.name rescue "" %>
+            <span style="display: block; clear: left; font-size: 0.7em;"><%= display_date_span(attendee.event_registrations.last.event) rescue "" %></span>
+          </td>
+          <td>
+            <%= attendee.event_registrations.last.created_at.to_s(:default_date) rescue "" %>
+          </td>
+        </tr>
+      <% end -%>
+    <% else -%>
+      <tr>
+        <td colspan="4">No Recent Attendees</td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
+
+<% unless @affiliates.nil? %>
+<table class="table dashboard">
+  <caption><span style="float:right;"><%= link_to('View All', affiliates_path) %></span>New Sales Agents</caption>
+  <tbody>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Signup Date</th>
+    </tr>
+    <% if @affiliates.any? -%>
+      <% @affiliates.each do |affiliate| -%>
+      <tr>
+        <td>
+          <%= link_to(h(affiliate.name), affiliate_path(affiliate)) %>
+          <% if affiliate.parent -%>
+            <span class="promoter" style="display: block; clear: left; font-size: 0.7em;">
+              Master Agent: <%=h affiliate.parent.name rescue '' %>
+            </span>
+          <% end -%>
+        </td>
+        <td><%=h affiliate.email %></td>
+        <td><%=h affiliate.phone_numbers.first rescue "" %></td>
+        <td><%= affiliate.created_at.strftime('%x') %></td>
+      </tr>
+      <% end -%>
+    <% else -%>
+      <tr>
+        <td colspan="4">No New Sales Agents</td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
+<% end %>

@@ -1,0 +1,62 @@
+<% form_for @affiliate, :url => api_affiliates_path, :html => { :class => 'form' } do |f| -%>
+  <%= hidden_field_tag :redirect_url, params[:redirect_url] %>
+  
+  <% if @affiliate.errors.on(:email) -%>
+    <p>
+      It appears you are trying to use an email address we already have registered. If you have forgotten your Affiliate Code
+      we can <%= link_to('resend the Affiliate Email', resend_welcome_path(@affiliate.email)) %> to the email address we have on file. Would you like us to
+      <%= link_to('resend the Affiliate Email', resend_welcome_path(@affiliate.email)) %> to your email now?
+    </p>
+  <% else -%>
+    <%= error_messages_for :affiliate %>
+  <% end -%>
+  
+  <h2>Please check your information and try again.</h2>
+  
+  <%= f.label :first_name %>
+  <br/>
+  <%= f.text_field :first_name, :class => 'text' %>
+  <br/>
+  <%= f.label :last_name %>
+  <br/>
+  <%= f.text_field :last_name, :class => 'text' %>
+  <br/>
+  <%= f.label :email %>
+  <br/>
+  <%= f.text_field :email, :class => 'text' %>
+  <br/>
+  
+  <% fields_for @phone do |phone| -%>
+    <%= phone.label :data, "Phone"%>
+    <br/>
+    <%= phone.text_field :data, :class => 'text' %>
+    <%= phone.select :category, PhoneNumber.categories %>
+    <br/>
+  <% end -%>
+
+  <h2>Where do we send the check?</h2>
+  <% fields_for @address do |address| -%>
+    <%= address.label :street %>
+    <br/>
+    <%= address.text_field :street, :class => 'text' %>
+    <br/>
+    <%= address.label :unit %>
+    <br/>
+    <%= address.text_field :unit, :class => 'text' %>
+    <br/>
+    <%= address.label :city %>
+    <br/>
+    <%= address.text_field :city, :class => 'text' %>
+    <br/>
+    <%= address.label :state %>
+    <br/>
+    <%= address.text_field :state, :class => 'text', :size => 2 %>
+    <br/>
+    <%= address.label :zip %>
+    <br/>
+    <%= address.text_field :zip, :class => 'text', :size => 5 %>
+    <br/>
+  <% end -%>
+  
+  <%= f.submit "Save", :class => 'submit' %>
+<% end -%>

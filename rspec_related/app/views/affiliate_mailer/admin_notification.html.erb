@@ -1,0 +1,24 @@
+Congrats! We have a new Sales Agent from The Innovative Investors.
+
+<table>
+  <caption>Agent Details</caption>
+  <tr>
+    <td>Name:</td>
+    <td><%=h @affiliate.name %></td>
+  </tr>
+  <tr>
+    <td>Email:</td>
+    <td><%= mail_to(@affiliate.email) %></td>
+  </tr>
+  <tr>
+    <td>Phone:</td>
+    <td><%=h @affiliate.phone_numbers.first %></td>
+  </tr>
+  <tr>
+    <td>Address:</td>
+    <td>
+      <%=h @affiliate.addresses.first.street %> <%=h @affiliate.addresses.first.unit %><br/>
+      <%=h @affiliate.addresses.first.city %>, <%=h @affiliate.addresses.first.state %> <%=h @affiliate.addresses.first.zip %>
+    </td>
+  </tr>
+</table>

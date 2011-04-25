@@ -1,0 +1,12 @@
+<div id="sub-menu">
+  <ul>
+    <% if current_user.type == "User" %>
+    <li><%= link_to('New Event', new_event_path) %></li>
+    <% end %>
+    <li><%= link_to('New Attendee', new_attendee_path) %></li>
+    <li><%= link_to('New Invitation', new_invitation_path) %></li>
+    <% if current_user.type == "User" %>
+    <li><%= link_to('New Sales Agent', new_affiliate_path) %></li>
+    <% end %>
+  </ul>
+</div>

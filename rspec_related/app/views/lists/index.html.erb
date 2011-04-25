@@ -1,0 +1,35 @@
+<% site_title("Manage #{current_model.name.humanize.pluralize}") %>
+
+<h2>Manage <%= current_model.name.humanize.pluralize %>  <%= "(#{List.count})" %></h2>
+<table class="table"> 
+  <tbody>
+    <tr>
+      <!-- TODO: sortable columns -->
+      <th>Number</th>
+      <th>Name</th>
+      <th>State</th>
+      <th>Suffix parameters</th>
+      <th>Actions</th>
+    </tr>
+    <% if current_objects.any? -%>
+      <% current_objects.each do |list| -%>
+      <tr>
+        <td><%= list.name %></td>
+        <td><%= list.number %></td>
+        <td>
+          <%= list.state %>
+        </td>
+        <td><%=h list.suffix_params %></td>
+        <td>
+          <%= link_to(icon_image_tag('edit', list), edit_list_path(list)) %>
+          <%= link_to(icon_image_tag('delete', list), list_path(list), :method => :delete, :confirm => "Are you sure?") %>
+        </td>
+      </tr>
+      <% end -%>
+    <% else -%>
+      <tr>
+        <td colspan="2">No <%= current_model.name.capitalize.pluralize %></td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>

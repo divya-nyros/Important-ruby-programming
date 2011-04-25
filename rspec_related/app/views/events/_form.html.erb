@@ -1,0 +1,142 @@
+<% content_for :script do -%>
+ jQuery(document).ready(function(){
+  jQuery(".datepicker").datepicker({ maxDate: '+1y', minDate: '-1m' });
+  });
+ jQuery(function($) {
+  jQuery("#event_addresses_attributes_0_country_id").change(function() {
+    var country = jQuery('select#event_addresses_attributes_0_country_id :selected').val();
+    if(country == "") country="0";
+    jQuery.get('update_state_select?val=' + country, function(data){
+    jQuery("#addressStates").html(data);
+    })
+    return false;
+  });
+})
+<% end -%>
+<% content_for :style do -%>
+table.address {}
+table.address td { padding: 0em 0.25em; }
+table.address td.label { text-align: right; vertical-align: middle; }
+<% end -%>
+
+<% form_for @event, :html => { :class => 'form' } do |f| -%>
+  <%= error_messages_for :event %>
+  
+  <div class="right-col">
+    <h3>Event Details</h3>
+    
+    <fieldset class="last">
+      <%= f.label :description, "Description" %>
+      <br/>
+      <%= f.text_area :description, :size => '30x10' %>
+      <br/>
+      <%= f.label :instructions, "Instructions" %>
+      <br/>
+      <%= f.text_area :instructions, :size => '30x10' %>      
+    </fieldset>
+  </div>
+  
+  <div class="left-col">
+    <!-- <h3>Event Information</h3> -->
+    <fieldset>
+      <%= f.label :name, "Event Name" %>
+      <br/>
+      <span style="margin-left: 2.0em;"><%= f.text_field :name, :class => 'text' %></span>
+      <br/>
+      <%= f.label :type_id, "Type" %>
+      <br/>
+      <span style="margin-left: 2.0em;"><%= f.collection_select :type_id, EventType.find(:all, :order => "name"), :id, :name, { :prompt => "-- Select a type --" } %></span>
+      <br/>
+      <table class="date-time-table">
+        <tr>
+          <td><%= f.label :start_date, "Start Date" %></td>
+          <td><%= f.text_field :start_date, :class => 'datepicker' %></td>
+          <td><%= f.label :start_time, "Start Time" %></td>
+          <td><%= f.text_field :start_time, :class => 'text', :style => 'width: 120px;' %></td>
+        </tr>
+        <tr>
+          <td><%= f.label :end_date, "End Date" %></td>
+          <td><%= f.text_field :end_date, :class => 'datepicker' %></td>
+          <td><%= f.label :end_time, "End Time" %></td>
+          <td><%= f.text_field :end_time, :class => 'text', :style => 'width: 120px;' %></td>
+        </tr>
+      </table>
+    </fieldset>
+    
+    <fieldset>
+      <%= f.label :location, "Location/Venue" %>
+      <br/>
+      <span style="margin-left: 2.0em;"><%= f.text_field :location, :class => 'text' %></span>
+      <br/>
+      <% f.fields_for :addresses do |addresses| -%>
+        <label>Address</label>
+        <table style="margin-left: 2em;" class="address">
+          <tr>
+            <td colspan="2">
+              <%= addresses.select :country_id, Carmen::countries, {:selected => @event.address.blank? || @event.address.country_id.blank? ? 'US' : @event.address.country_id } %>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">
+              <%= addresses.label :street, "Street/Unit" %>
+            </td>
+            <td>
+              <%= addresses.text_field :street, :class => 'text', :style => "width: 220px;" %>
+              <%= addresses.text_field :unit, :class => 'text', :style => "width: 70px;" %>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">
+              <%= addresses.label :city %>
+            </td>
+            <td>
+              <%= addresses.text_field :city, :class => 'text', :style => "width: 240px;" %>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">
+              <%= addresses.label :state, "State/Province" %>
+            </td>
+            <td>        
+              <span id="addressStates">
+                <%= render :partial => 'events/change_state_option',:locals => {:country_id => (@event.address.blank? || @event.address.country_id.blank? ? 'US' : @event.address.country_id), :state=>@event.address.blank? ? nil : @event.address.state,:form => addresses} %>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">
+              <%= addresses.label :zip, "ZIP/Postal Code" %>
+            </td>
+            <td>
+              <%= addresses.text_field :zip, :class => 'text', :style => "width: 75px;" %>
+            </td>
+          </tr>
+        </table>
+      <% end -%>
+    </fieldset>
+    
+    <fieldset>
+      <% f.fields_for :phone_numbers do |phone_numbers| -%>
+        <%= phone_numbers.label :data, "Phone Number" %>
+        <br/>        
+        <span style="margin-left: 2.0em;">
+          <%= phone_numbers.text_field :data, :class => 'text' %> <%= phone_numbers.select :category, PhoneNumber.categories %>
+        </span>
+      <% end -%>
+    </fieldset>
+    
+    <fieldset class="last">
+      <% f.fields_for :websites do |websites| -%>
+        <%= websites.label :data, "Website" %>
+        <br/>        
+        <span style="margin-left: 2.0em;">
+          <%= websites.text_field :data, :class => 'text' %> <%= websites.select :category, Website.categories %>
+        </span>
+      <% end -%>
+    </fieldset>
+  </div>
+  
+  <div class="clear" style="height: 10px;"><hr/></div>
+  
+  <%= f.submit "Save", :class => 'submit' %> or <%= link_to 'Cancel', objects_path %>
+<% end -%>

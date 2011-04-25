@@ -1,0 +1,34 @@
+<% site_title("Manage #{current_model.name.humanize.pluralize}") %>
+
+<h2>Manage <%= current_model.name.humanize.pluralize %>  <%= "(#{current_model.count})" %></h2>
+
+<table class="table percent-100"> 
+  <tbody>
+    <tr>
+      <!-- TODO: sortable columns -->
+      <th>Name</th>
+      <th>Description</th>
+      <% if current_user.type == "User" -%>
+      <th>Actions</th>
+      <% end -%>
+    </tr>
+    <% if current_objects.any? -%>
+      <% current_objects.each do |source| -%>
+      <tr>
+        <td style="white-space: nowrap;"><%= link_to(h(source.name), source_path(source)) %></td>
+        <td><%=h source.description %></td>
+        <% if current_user.type == "User" -%>
+        <td class="actions icons">
+          <%= link_to(icon_image_tag('edit', source), edit_source_path(source)) %>
+          <%= link_to(icon_image_tag('delete', source), source_path(source), :method => :delete, :confirm => "Are you sure?") %>
+        </td>
+        <% end -%>
+      </tr>
+      <% end -%>
+    <% else -%>
+      <tr>
+        <td colspan="3">No <%= current_model.name.capitalize.pluralize %></td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>

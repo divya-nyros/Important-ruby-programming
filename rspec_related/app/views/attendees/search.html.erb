@@ -1,0 +1,48 @@
+<% site_title("Manage #{current_model.name.humanize.pluralize}") %>
+
+<h2>Manage <%= current_model.name.humanize.pluralize %>  <%= "(#{Attendee.count})" %></h2>
+<table class="table"> 
+  <tbody>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+			<th>Phone</th>
+      <th>Affiliate</th>
+			<th>Event(s)</th>
+      <th>Actions</th>
+    </tr>
+    <% if current_objects.any? -%>
+      <% current_objects.each do |attendee| -%>
+      <tr>
+        <td><%= link_to(h(attendee.name), attendee_path(attendee)) %></td>
+       
+        <td>
+          <%=h attendee.email%>
+        </td>
+				 <td>
+          <%=h attendee.phone_numbers rescue "" %>
+        </td>
+					
+				 <td>
+          <%=h attendee.affiliate.first_name%>
+				 </td>
+          <td>
+					  <% attendee.events.upcoming.each do |event| -%>
+              <%=h event.name %> (<%= event.start_date.to_time.to_s(:default_date) %>)<br/>
+            <% end -%>
+				 </td>
+        <td>
+         | <%= link_to('Edit', edit_attendee_path(attendee)) %> |
+          <%= link_to('Delete', attendee_path(attendee), :method => :delete, :confirm => "Are you sure?") %> |
+        </td>
+      </tr>
+      <% end -%>
+    <% else -%>
+      <tr>
+        <td colspan="5">No <%= current_model.name.capitalize.pluralize %></td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
+
+<%= will_paginate current_objects %>

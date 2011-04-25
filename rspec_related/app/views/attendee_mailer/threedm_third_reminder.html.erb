@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head></head>
+  <body>
+    <p>Hello <%= @attendee.first_name %>,</p>
+
+    <p>I just wanted to send you a quick reminder email. I’m sure you’re already locked and loaded for our training coming up:<p>
+
+    <p>
+      <strong><%= @event.start_date.strftime("%A %B #{@event.start_date.day.ordinalize}, %Y") %></strong><br />
+      <strong><%= @event.location + " " + (@event.addresses.first.street rescue "") + " " + (@event.addresses.first.unit rescue "") %></strong><br />
+      <strong><%= (@event.addresses.first.city rescue "") + " " + (@event.addresses.first.state rescue "") + ", " + (@event.addresses.first.zip rescue "") %></strong>
+    </p>
+
+    <p>All attendees <span style="font-weight:bold; text-decoration:underline;">must</span> be registered so please make sure to do so if you haven’t already yet.</p>
+
+    <p>If you need your unique registration code again, please just reply and I’ll send it. Sometimes it goes to your junk box so you might want to check there.</p>
+
+    <p>In preparation for the training you should:</p>
+
+    <ol>
+      <li>Go through as many videos as you can in the Vault.</li>
+
+      <li>Register here for your free blog <a href='http://www.freerealestateblogfactory.com'>http://www.freerealestateblogfactory.com</a> as we might discuss real estate blogging if we have time. </li>
+
+      <li>Register for Connected Innovative Investors at <a href="http://www.freerealestateblogfactory.com">http://www.connectedinnovativeinvestors.com</a> (make sure to register all the way at the bottom of the page).</li>
+
+      <li>Commit to paper the types of transactions you would like to focus on and your ideal financial goal for the next 12 months.</li>
+    </ol>
+
+    <p><strong>Thank you!</strong></p>
+
+    <p>
+      Regards,<br />
+      Jasmine
+    </p>
+    
+<pre>
+<span style="font-weight:bold; font-size: 1.2em;">The Innovative Investors</span>
+Jasmine Noble
+Personal Assistant
+135 West 52nd Street (5th Floor)
+New York, NY 10019
+tel: (888) 373-7052
+fax: 1 800 948-5703
+<div style="font-style:italic;">
+*****************************************************************************
+If you are not the intended recipient of this e-mail, please notify
+the sender immediately. The contents of this e-mail do not amend
+any existing disclosures or agreements unless expressly stated.
+*****************************************************************************
+</div>
+</pre>
+  </body>

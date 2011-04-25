@@ -1,0 +1,7 @@
+<% site_title("Editing #{current_model.name.humanize} | #{current_object.name}") %>
+
+<h2>
+  Edit <%= link_to(current_object.name, attendee_path(current_object)) %>
+</h2>
+
+<%= render :partial => 'form' %>

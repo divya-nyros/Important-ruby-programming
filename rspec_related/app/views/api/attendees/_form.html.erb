@@ -1,0 +1,58 @@
+<% form_for @attendee, :url => api_attendees_path, :html => { :class => 'form' } do |f| -%>
+  <%= hidden_field_tag :redirect_url, params[:redirect_url] %>
+  
+  <% if @attendee && @attendee.errors.on(:email) -%>
+    <p>
+      It appears you are trying to use an email address that is not valid
+    </p>
+  <% else -%>
+    <%= error_messages_for :attendee %>
+  <% end -%>
+  
+  <h2>Please check your information and try again.</h2>
+  <label for="event_id">Event</label>
+  <br/>
+  <span>
+    <%= collection_select(:event, :id, Event.upcoming.find(:all, :conditions => ["private = ?", false], :order => "name, start_date"), :id, :display_name, { :prompt => "-- Select an Upcoming Event --"}) %>
+    <input type="hidden" name="event[old_id]" value="<%= !@event.nil? ? @event.id : nil %>" />
+  </span>
+  <br />
+  
+  <%= f.label :first_name %>
+  <br/>
+  <%= f.text_field :first_name, :class => 'text' %>
+  <br/>
+  <%= f.label :last_name %>
+  <br/>
+  <%= f.text_field :last_name, :class => 'text' %>
+  <br/>
+  <%= f.label :email %>
+  <br/>
+  <%= f.text_field :email, :class => 'text' %>
+  <br/>
+  <%= f.hidden_field :questionnaire %>
+  <br/>
+  
+  <% fields_for :phone_numbers do |phone| -%>
+    <%= phone.label :data, "Phone"%>
+    <br/>
+    <%= phone.text_field :data, :class => 'text' %>
+    <%= phone.select :category, PhoneNumber.categories %>
+    <br/>
+  <% end -%>
+
+  <h2>How did you find us?</h2>
+  <% unless @attendee.nil? || @attendee.event_registrations.nil? || @event.nil? %>
+    <% @attendee.event_registrations.each do |ev| %>
+      <% if ev.event_id == @event.id && !ev.source_id.nil? %>
+        <% @source = Source.find(ev.source_id) rescue nil %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <span>
+    <%= collection_select(:source, :id, Source.find(:all, :order => "name"), :id, :name, { :prompt => "-- Select a source --"}) %>
+  </span>
+  <br />
+  <br />
+  <%= f.submit "Save", :class => 'submit' %>
+<% end -%>

@@ -1,0 +1,15 @@
+<ul>
+  <li class="<%= 'selected' if %w( dashboard ).include?(controller_name) %>"><%= link_to('Dashboard', dashboard_path) %></li>
+  <li class="<%= 'selected' if %w( events ).include?(controller_name) %>"><%= link_to('Events', events_path) %></li>
+  <li class="<%= 'selected' if %w( attendees ).include?(controller_name) %>"><%= link_to('Attendees', attendees_path) %></li>
+  <li class="<%= 'selected' if %w( invitations ).include?(controller_name) %>"><%= link_to('Invitations', invitations_path) %></li>
+  <% if current_user.type == "User" %>
+    <li class="<%= 'selected' if %w( affiliates ).include?(controller_name) %>"><%= link_to('Sales Agents', affiliates_path) %></li>
+    <li class="<%= 'selected' if %w( sources ).include?(controller_name) %>"><%= link_to('Sources', sources_path) %></li>
+    <li class="<%= 'selected' if %w( users ).include?(controller_name) %>"><%= link_to('Users', users_path) %></li>
+    <li class="<%= 'selected' if %w( event_types ).include?(controller_name) %>"><%= link_to('Event Types', event_types_path) %></li>
+  <% else %>
+    <li class="<%= 'selected' if %w( sources ).include?(controller_name) %>"><%= link_to('Sources', sources_path) %></li>
+    <li class="<%= 'selected' if %w( affiliates ).include?(controller_name) && action_name == "edit" && params[:id] == current_user.id.to_s %>"><%= link_to('My Account', edit_affiliate_path(current_user)) %></li>
+  <% end %>
+</ul>

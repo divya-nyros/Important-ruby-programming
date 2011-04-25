@@ -1,0 +1,10 @@
+<div id="sub-menu">
+  <ul>
+    <li class="<%= 'selected' if %w( index ).include?(action_name) %>"><%= link_to('Upcoming Events', events_path) %></li>
+    <li class="<%= 'selected' if %w( closed ).include?(action_name) %>"><%= link_to('Closed Events', closed_events_path) %></li>
+    <li class="<%= 'selected' if %w( all ).include?(action_name) %>"><%= link_to('All Events', all_events_path) %></li>
+    <% if current_user.type == "User" %>
+      <li class="<%= 'selected' if %w( new create ).include?(action_name) %>"><%= link_to('New Event', new_event_path) %></li>
+    <% end %>
+  </ul>
+</div>

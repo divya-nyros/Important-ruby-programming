@@ -1,0 +1,116 @@
+<% site_title("Manage #{current_model.name.humanize.pluralize}") %>
+
+<% if current_user.type == "User" %>
+  <h2>Manage <%= action_name == 'index' ? 'Upcoming' : action_name.titleize %> <%= current_model.name.humanize.pluralize %>  <%= "(#{current_objects.total_entries})" %></h2>
+<% else %>
+  <h2><%= action_name == 'index' ? 'Upcoming' : action_name.titleize %> <%= current_model.name.humanize.pluralize %>  <%= "(#{current_objects.total_entries})" %></h2>
+<% end %>
+
+<% unless current_objects.nil? %>
+  <% if @export_url.nil? %>
+    <div class="left-col"><a class="export" href="/events/export/all">Export all</a></div>
+  <% else %>
+    <div class="left-col"><a class="export" href="<%= @export_url %>">Export all</a></div>
+  <% end %>
+<% end %>
+
+<table class="table percent-100"> 
+  <tbody>
+    <tr>
+      <!-- TODO: sortable columns -->
+      <th>Name</th>
+      <th>Location</th>
+      <th>Dates &amp; Times</th>
+      <th>Visible</th>
+      <th>State</th>
+      <th>Actions</th>
+    </tr>
+    <% if current_objects.any? -%>
+      <% current_objects.each do |event| -%>
+      <tr>
+        <%
+          if current_user.type == "User"
+            number_of_attendees = event.attendees.count
+          else
+            number_of_attendees = event.attendees.count(:conditions => ["affiliate_id = ?", current_user.id])
+          end
+        %>
+        <td><%= link_to(h(event.name), event_path(event)) %><br /><span style="font-size:0.75em;"><%= number_of_attendees.to_s + " " + "attendee".humanize.pluralize %></span></td>
+        <td><%=h event.location %></td>
+        <td style="white-space: nowrap;">
+          <%= display_date_span(event) %><br/>
+          <span style="font-size: 0.75em;"><%= event.start_time.to_s(:default_time) %> - <%= event.end_time.to_s(:default_time) %></span>
+        </td>
+        <td id="event_<%= event.id %>_private">
+          <%= event.private? ? "Private" : "Public" %>
+        </td>
+        <td id="event_<%= event.id %>_state" class="<%= event.state %>">
+          <%=h event.state.humanize %>
+        </td>
+        <td class="actions icons">
+          <% if current_user.type == "User" -%>
+            <%= link_to(icon_image_tag('edit', event), edit_event_path(event)) %>
+            <%= link_to(icon_image_tag('copy', event), "/events/duplicate/#{event.id}") %>
+            <%= link_to(icon_image_tag('delete', event), event_path(event), :method => :delete, :confirm => "Are you sure?") %>
+            
+            <%= link_to(icon_image_tag('redo', event, 'unpublish'), "/events/unpublish/" + event.id.to_s, :class => "ajax", :onclick => "return updateState(this);") %>
+            <%= link_to(icon_image_tag('go', event, 'publish'), "/events/publish/" + event.id.to_s, :class => "ajax", :onclick => "return updateState(this);") %>
+          <% end -%>
+          
+          <% if current_user.type == "User" %>
+            <% if event.private.nil? || event.private %>
+              <%= link_to(icon_image_tag('unlock', nil, 'make event public'), "/events/set_visible/#{event.id}?value=public", :class => "unlock", :id => "unlock_#{event.id}") %>
+              <%= link_to(icon_image_tag('lock', nil, 'make event private'), "/events/set_visible/#{event.id}?value=private", :class => "lock", :id => "lock_#{event.id}", :style => "display:none;") %>
+            <% else %>
+              <%= link_to(icon_image_tag('unlock', nil, 'make event public'), "/events/set_visible/#{event.id}?value=public", :class => "unlock", :id => "unlock_#{event.id}", :style => "display:none;") %>
+              <%= link_to(icon_image_tag('lock', nil, 'make event private'), "/events/set_visible/#{event.id}?value=private", :class => "lock", :id => "lock_#{event.id}") %>
+            <% end %>
+          <% end %>
+          <%= link_to(icon_image_tag('export', event), "/events/export/#{event.id}", :class => "export", :id => "export_#{event.id}") %>
+          <%= link_to(icon_image_tag('accept', nil, 'event check-in'), checkin_event_path(event), :id => "checkin_#{event.id}", :class => "last") %>
+        </td>
+      </tr>
+      <% end -%>
+      <script type="text/javascript">
+        function updateState(currentTag) {
+          jQuery.get(jQuery(currentTag).attr("href"), function(data) {
+            jQuery(currentTag).parent().prev().attr("class", data);
+            jQuery(currentTag).parent().prev().html(data);
+          });
+
+          return false;
+        }
+
+        jQuery(".unlock").click(function(event) {
+          event.preventDefault();
+          var current_tag = jQuery(this);
+
+          jQuery.get(jQuery(this).attr("href"), function(data) {
+            current_tag.parent().prev().prev().html(data);
+            current_tag.next().show();
+            current_tag.hide();
+          })
+        });
+
+        jQuery(".lock").click(function(event) {
+          event.preventDefault();
+          var current_tag = jQuery(this);
+
+          jQuery.get(jQuery(this).attr("href"), function(data) {
+            current_tag.parent().prev().prev().html(data);
+            current_tag.prev().show();
+            current_tag.hide();
+          })
+        });
+      </script>
+    <% else -%>
+      <tr>
+        <td colspan="5">No <%= current_model.name.capitalize.pluralize %></td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
+
+<%= will_paginate current_objects %>
+
+<%= page_entries_info current_objects %>

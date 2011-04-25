@@ -1,0 +1,73 @@
+<div class="sidebar">
+  <div class="title"><p>Search</p></div>
+  <span>
+  <% form_tag search_attendees_path, :method => :get, :class => 'form' do |f| -%>
+    <label for="name">Name:</label>
+    <%= text_field :search, :name, :size => 20, :value => @default_value.nil? || @default_value[:name].nil? ? "" : @default_value[:name] %>
+    <br/>
+    <label for="email">Email:</label>
+    <%= text_field :search, :email, :size => 20, :value => @default_value.nil? || @default_value[:email].nil? ? "" : @default_value[:email] %>
+    <br/>
+    <label for="phone">Phone:</label>
+    <%= text_field :search, :phone, :size => 20, :value => @default_value.nil? || @default_value[:phone].nil? ? "" : @default_value[:phone] %>
+    <br/>
+    <label for="status">Status:</label>
+    <%
+      state_options = [["-- Any Status --", ""], ["Registered", "registered"], ["Confirmed", "confirmed"], ["Canceled", "canceled"], ["Attended", "attended"], ["No Showed", "no_showed"], ["Undecided", "undecided"], ["Purchased", "purchased"]]
+    %>
+    <%= select_tag "search[state]", options_for_select(state_options, "") %>
+    <br/>
+    
+    <% if current_user.type == "User" %>      
+      <label for="affiliate_id">Sales Agent:</label>
+      <%
+      options = Affiliate.find(:all, :order => "first_name, last_name").collect{|affiliate| [affiliate.name, affiliate.id]}
+      options.insert(0, ["-- Any Sales Agent --", ""])
+
+      if @default_value.nil? || @default_value[:affiliate_id].nil?
+        selected = "";
+      else
+        options.each do |option|
+          if option[1].to_s == @default_value[:affiliate_id]
+            selected = [option[0], option[1]]
+
+            break
+          end
+        end
+      end
+      %>
+      <%= select_tag "search[affiliate_id]", options_for_select(options, selected) %>
+      <br/>
+    <% end %>
+
+    <label for="event_id">Event:</label>
+    <%
+    if @default_value.nil? || @default_value[:event_id].nil?
+      selected = "";
+    else
+      selected = @default_value[:event_id]
+    end
+    %>
+    <%
+    options = Event.find(:all, :conditions => ["state != ?", "expired"], :order => "name").collect{|event| [event.display_name, event.id]}
+    options.insert(0, ["-- Any Event --", ""])
+
+    if @default_value.nil? || @default_value[:event_id].nil?
+      selected = "";
+    else
+      options.each do |option|
+        if option[1].to_s == @default_value[:event_id]
+          selected = [option[0], option[1]]
+
+          break
+        end
+      end
+    end
+    %>
+    <%= select_tag "search[event_id]", options_for_select(options, selected), {:style => "width: 210px;"} %>
+    <br/>
+    <%= submit_tag "Search", :name => nil, :class => 'submit' %>
+  <% end %>
+  </span>
+  <div class="sidebar-bottom"></div>
+</div>

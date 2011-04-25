@@ -1,0 +1,33 @@
+<% form_for @list, :html => { :class => 'form' } do |f| -%>
+  <%= error_messages_for :list %>
+  
+  <div class="left-col">
+    <fieldset>
+      <%= f.label :name %>
+      <br/>
+      <%= f.text_field :name, :class => 'text', :style => "width: 120px;" %>
+    </fieldset>
+    <fieldset>
+      <%= f.label :number %>
+      <br/>
+      <%= f.text_field :number, :class => 'text', :style => "width: 120px;" %>
+    </fieldset>
+    <fieldset>
+      <%= f.label :state %>
+      <br/>
+      <%= select :list, :state, options_for_select(Attendee.options_for_states), :style => "width: 120px;" %>
+    </fieldset>
+    <fieldset>
+      <%= f.label :event_id %>
+      <br/>
+      <%= select :list, :event_id, options_for_select(Event.all(:conditions => "state != 'expired'").collect{|event| [event.name, event.id]}), :style => "width: 120px;" %>
+    </fieldset>
+    <fieldset>
+      <%= f.label :suffix_params, "Submit form hidden parameter except listid" %>
+      <br/>
+      <%= f.text_area :suffix_params, :class => 'text', :style => "width: 100%; height:100px;" %>
+    </fieldset>
+  </div>
+<div class="clear"></div>
+  <%= f.submit "Save", :class => 'submit' %> or <%= link_to 'Cancel', objects_path %>
+<% end -%>

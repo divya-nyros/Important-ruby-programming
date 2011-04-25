@@ -1,0 +1,54 @@
+<div class="sidebar">
+  <div class="title"><p>Search</p></div>
+  <span>
+  <% form_tag search_invitations_path, :method => :get, :class => 'form' do |f| -%>
+    <label for="email">Email:</label>
+    <%= text_field :search, :email, :size => 20, :value => @default_value.nil? || @default_value[:email].nil? ? "" : @default_value[:email] %>
+    <br/>
+    <label for="status">Status:</label>
+    <%
+      state_options = [["-- Any Status --", ""], ["Accepted", "accepted"], ["Sent", "sent"]]
+    %>
+    <%= select_tag "search[state]", options_for_select(state_options, "") %>
+    <br/>
+    <label for="name">Code:</label>
+    <%= text_field :search, :code, :size => 20, :value => @default_value.nil? || @default_value[:code].nil? ? "" : @default_value[:code] %>
+    <br/>
+    
+    <label for="event_type">Event Type:</label>
+    <br/>
+    <% 
+      options = EventType.find(:all, :order => :name).map { |event_type| [event_type.name, event_type.id] } 
+      options.insert(0, ["-- Any Event Type --", ""])
+    -%>
+    <%= select_tag "search[event_type]", options_for_select(options, "") %>
+    <br/>
+    
+    <% if current_user.type == "User" %>      
+      <label for="affiliate_id">Sales Agent:</label>
+      <%
+      options = Affiliate.find(:all, :order => "first_name, last_name").collect{|affiliate| [affiliate.name, affiliate.id]}
+      options.insert(0, ["-- Any Sales Agent --", ""])
+
+      if @default_value.nil? || @default_value[:affiliate_id].nil?
+        selected = "";
+      else
+        options.each do |option|
+          if option[1].to_s == @default_value[:affiliate_id]
+            selected = [option[0], option[1]]
+
+            break
+          end
+        end
+      end
+      %>
+      <%= select_tag "search[affiliate_id]", options_for_select(options, selected) %>
+      <br/>
+    <% end %>
+
+    <br/>
+    <%= submit_tag "Search", :name => nil, :class => 'submit', :onclick => "javascript: alert('feature coming soon'); return false;" %>
+  <% end %>
+  </span>
+  <div class="sidebar-bottom"></div>
+</div>

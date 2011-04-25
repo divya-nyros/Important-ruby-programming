@@ -1,0 +1,7 @@
+<span id="addressStates">
+ <% if !country_id.blank? %>
+    <%= select_tag("event[addresses_attributes][0][state]",state_options_for_select(state,"#{country_id}"), {:style => 'width:240px;'}) rescue "<span><select disabled='disabled' style='width:240px;'><option>Select State</option></select></span>" %>
+  <% else %>
+   <span><select disabled="disabled" style=" width:240px;"><option>Select State</option></select></span>
+  <% end %>
+</span>

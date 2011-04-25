@@ -1,0 +1,18 @@
+<div class="sidebar">
+  <div class="title"><p>Search</p></div>
+  <span>
+  <% form_tag search_affiliates_path, :method => :get, :class => 'form' do |f| -%>
+    <label for="name">Name:</label>
+    <%= text_field :search, :name, :size => 20 %>
+    <br/>
+    <!-- <label for="phone">Phone:</label>
+    <%= text_field :search, :phone, :size => 20 %> 
+    <br/> -->
+    <label for="email">Email:</label>
+    <%= text_field :search, :email, :size => 20 %>
+    <br/>
+    <%= submit_tag "Search", :name => nil, :class => 'submit' %>
+  <% end %>
+  </span>
+  <div class="sidebar-bottom"></div>
+</div>

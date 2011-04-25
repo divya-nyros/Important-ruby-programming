@@ -1,0 +1,43 @@
+<!DOCTYPE html 
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>The Innovative Investors | Please Sign In</title>
+    <%= stylesheet_link_tag 'main.css' %>
+  </head>
+  <body>
+    <div id="header"> <!-- This div contains both menus, information bars, the logo and slogan. -->
+      <div id="logo">
+        <img src="/images/logo_ii.jpg" alt="The Innovative Investors | Admin" /><br />
+        <div id="slogan"></div>
+      </div>
+      <div id="user-info">
+        <!-- <p><img src="/images/user.gif" alt="" /> Welcome, <strong><%#= current_user.name %></strong> | <%#= link_to 'logout', logout_path %></p>
+        <div id="login-info" style="display:none;">
+          <p>Last login from: <a href="#">123.45.67.89</a></p>
+        </div> -->
+        <!--
+        This line is for testing only
+        -->
+      </div>
+      <div id="menu">
+        <ul>
+          <li class="<%= 'selected' if %w( users sessions ).include?(controller_name) %>"><%= link_to('Sign In', nil) %></li>
+        </ul>
+      </div>
+      
+      <%= render :partial => 'submenu' rescue nil %>
+    </div>
+    <div id="master">
+      <div id="sidebar-container">
+        <%= render :partial => 'sidebar' rescue nil %>
+      </div>
+      <div id="page">
+        <%= flash_messages %>
+        
+        <%= yield :layout %>
+      </div>
+    </div>
+  </body>
+</html>

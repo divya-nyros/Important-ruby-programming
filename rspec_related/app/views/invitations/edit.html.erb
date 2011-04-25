@@ -1,0 +1,7 @@
+<% site_title("Editing #{current_model.name.humanize} | #{current_object.email}") %>
+
+<h2>
+  Edit Invitation for <%= link_to(current_object.email, invitation_path(current_object)) %>
+</h2>
+
+<%= render :partial => 'form' %>

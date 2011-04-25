@@ -1,0 +1,71 @@
+<% form_for @user, :html => { :class => 'form' } do |f| -%>
+  <%= error_messages_for :user %>
+  
+  <div class="left-col">
+    <fieldset>
+      <%= f.label :first_name, "Name" %>
+      <br/>
+      <%= f.text_field :first_name, :class => 'text', :style => "width: 120px;" %>
+      <%= f.text_field :last_name, :class => 'text', :style => "width: 240px;" %>
+    </fieldset>
+    
+    <fieldset>
+      <%= f.label :email %>
+      <br/>
+      <span style="margin-left: 2.0em;"><%= f.text_field :email, :class => 'text' %></span>
+    </fieldset>
+    
+    <fieldset>
+      <% f.fields_for :phone_numbers do |phone_numbers| -%>
+        <%= phone_numbers.label :data, "Phone Number" %>
+        <br/>        
+        <span style="margin-left: 2.0em;">
+          <%= phone_numbers.text_field :data, :class => 'text' %> <%= phone_numbers.select :category, PhoneNumber.categories %>
+        </span>
+      <% end -%>
+    </fieldset>
+    
+    <fieldset>
+      <% f.fields_for :websites do |websites| -%>
+        <%= websites.label :data, "Website" %>
+        <br/>        
+        <span style="margin-left: 2.0em;">
+          <%= websites.text_field :data, :class => 'text' %> <%= websites.select :category, Website.categories %>
+        </span>
+      <% end -%>
+    </fieldset>
+    
+    <fieldset class="last">
+      <% f.fields_for :addresses do |addresses| -%>
+        <label>Address</label>
+        <br/>
+        <span style="margin-left: 2.0em;">
+          <%= addresses.text_field :street, :class => 'text' %>
+          <%= addresses.text_field :unit, :class => 'text', :style => "width: 70px;" %>
+        </span>
+        <br/>
+        <span style="margin-left: 2.0em;">
+          <%= addresses.text_field :city, :class => 'text', :style => "width: 240px;" %>
+          <%= addresses.text_field :state, :class => 'text', :style => "width: 40px;" %>
+          <%= addresses.text_field :zip, :class => 'text', :style => "width: 75px;" %>
+        </span>
+      <% end -%>
+    </fieldset>
+  </div>
+  
+  <div class="clear" style="height: 10px;"><hr/></div>
+  
+  <div>
+    <fieldset>
+      <%= f.label :password %>
+      <br/>
+      <span style="margin-left: 2.0em;"><%= f.password_field :password, :class => 'text' %></span>
+      <br/>
+      <%= f.label :password_confirmation, "Confirm password" %>
+      <br/>
+      <span style="margin-left: 2.0em;"><%= f.password_field :password_confirmation, :class => 'text' %></span>
+    </fieldset>
+  </div>
+  
+  <%= f.submit "Save", :class => 'submit' %> or <%= link_to 'Cancel', objects_path %>
+<% end -%>

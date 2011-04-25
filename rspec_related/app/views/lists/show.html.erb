@@ -1,0 +1,19 @@
+<% site_title("Managing #{current_model.name.humanize} | #{current_object.name}") %>
+<h2>
+  <span style="float: right; font-weight: normal"><%= link_to 'Edit this list', edit_list_path(current_object) %></span>
+  <%= current_object.name %>
+</h2>
+
+<div class="right-col right-align">
+  Created On: <strong><%= current_object.created_at.strftime('%x') %></strong>
+</div>
+
+<div class="left-col left-align">
+  number: <strong><%= current_object.number %></strong>
+  <br/>
+  State: <strong><%=h current_object.state %></strong>
+  <br/>
+  Suffix parameters: <strong><%=h current_object.suffix_params %></strong>
+</div>
+
+<div class="clear">&nbsp;</div>

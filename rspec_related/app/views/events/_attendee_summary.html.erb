@@ -1,0 +1,86 @@
+<h2>
+  <span style="float: right; font-weight: normal"><%= link_to 'Export this event', export_event_path(current_object) %></span> 
+  Attendee Summary
+</h2>
+
+<%-
+  stats = Event.stats(current_object.id, current_user)
+  registered = stats[:registered]
+  confirmed   = stats[:confirmed]
+  attended    = stats[:attended]
+  no_shows    = stats[:no_showed]
+  subdnb      = stats[:subdnb]
+  otf         = stats[:otf]
+  bought      = stats[:bought]
+  source_counts = Source.statistics(current_object, current_user)
+-%>
+<table class="table summary">
+  <tr>
+    <th>Registered</th>
+    <th>Confirmed</th>
+    <th>No-Shows</th>
+    <th>Attended</th>
+    <th>SUBDNB</th>
+    <th>OTF</th>
+    <th>Bought</th>
+  </tr>
+  <% if registered > 0 -%>
+  <tr>
+    <td><strong><%= registered %></strong></td>
+    <td>
+      <strong><%= confirmed %></strong>
+      <span style="color: #999; font-size: 0.95em;">(<%= number_to_percentage((((confirmed.to_f / registered.to_f) * 100).round(0) rescue 0), :precision => 0) %>)</span>
+    </td>
+    <td>
+      <strong><%= no_shows %></strong>
+      <span style="color: #999; font-size: 0.95em;">(<%= number_to_percentage((((no_shows.to_f / registered.to_f) * 100).round(0) rescue 0), :precision => 0) %>)</span>
+    </td>
+    <td>
+      <strong><%= attended %></strong>
+      <span style="color: #999; font-size: 0.95em;">(<%= number_to_percentage((((attended.to_f / registered.to_f) * 100).round(0) rescue 0), :precision => 0) %>)</span>
+    </td>
+    <td>
+      <strong><%= subdnb %></strong>
+      <span style="color: #999; font-size: 0.95em;">(<%= number_to_percentage((((subdnb.to_f / attended.to_f) * 100).round(0) rescue 0), :precision => 0) %>)</span>
+    </td>
+    <td>
+      <strong><%= otf %></strong>
+      <span style="color: #999; font-size: 0.95em;">(<%= number_to_percentage((((otf.to_f / attended.to_f) * 100).round(0) rescue 0), :precision => 0) %>)</span>
+    </td>
+    <td>
+      <strong><%= bought %></strong>
+      <span style="color: #999; font-size: 0.95em;">(<%= number_to_percentage((((bought.to_f / attended.to_f) * 100).round(0) rescue 0), :precision => 0) %>)</span>
+    </td>
+  </tr>
+  <% else -%>
+  <tr>
+    <td colspan="5">There are no registered attendees</td>
+  </tr>
+  <% end -%>
+</table>
+
+<% unless source_counts.length == 0 %>
+<br />
+<br />
+<h3>Source statistics</h3>
+  <table class="table summary">
+    <tr>
+      <% source_counts.each do |name, count| %>
+        <th>
+          <%= name.titleize %>
+        </th>
+      <% end %>
+        <th>Unknown</th>
+    </tr>
+    <tr>
+      <% total_sources = 0 %>
+      <% source_counts.each do |name, count| %>
+        <td>
+          <%= count.to_s + " (" + number_to_percentage((((count.to_f / registered.to_f) * 100).round(0) rescue 0), :precision => 0).to_s + ")" %>
+          <% total_sources += count %>
+        </td>
+      <% end %>
+        <td><%= (registered - total_sources).to_s + " ("  + number_to_percentage(((((registered - total_sources).to_f / registered.to_f) * 100).round(0) rescue 0), :precision => 0).to_s + ")"%></td>
+    </tr>
+  </table>
+<% end %>
